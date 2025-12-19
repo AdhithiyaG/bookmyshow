@@ -9,6 +9,8 @@ function createApp(cache) {
   const app = express();
   app.use(cors({ origin: cfg.corsOrigin }));
   app.use(morgan('dev'));
+  // Root route for platform health probes
+  app.get('/', (req, res) => res.json({ ok: true, service: 'bookmyshow-api', endpoints: ['/health','/movies','/shows/:showId/seats'] }));
   app.get('/health', (req, res) => res.json({ ok: true }));
 
   app.post('/admin/seed', async (req, res) => {
