@@ -79,7 +79,7 @@ export default function App() {
       {/* Header */}
       <header className="bg-gradient-to-r from-brand-500 to-indigo-600 text-white shadow">
         <div className="container py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">BookMyShow LLD</h1>
+          <h1 className="text-xl font-semibold">BookMyShow</h1>
           <div className="flex items-center gap-2">
             {apiInfo && (
               <span className="badge badge-info">API: {apiInfo.ok ? 'connected' : 'offline'}</span>
