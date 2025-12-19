@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cfg = require('./config');
 const { buildRouter } = require('./routes');
+const { isRedisEnabled } = require('./cache');
 const { seed } = require('./seed');
 
 function createApp(cache) {
@@ -19,7 +20,7 @@ function createApp(cache) {
   }));
   app.use(morgan('dev'));
   // Root route for platform health probes
-  app.get('/', (req, res) => res.json({ ok: true, service: 'bookmyshow-api', endpoints: ['/health','/movies','/shows/:showId/seats'] }));
+  app.get('/', (req, res) => res.json({ ok: true, service: 'bookmyshow-api', cache: isRedisEnabled() ? 'redis' : 'memory', endpoints: ['/health','/movies','/shows/:showId/seats'] }));
   app.get('/health', (req, res) => res.json({ ok: true }));
 
   app.post('/admin/seed', async (req, res) => {

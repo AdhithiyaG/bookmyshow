@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { getMovies, getTheaters, getShows, getSeats, createHold, confirmHold, cancelHold } from './api/client'
+import { getMovies, getTheaters, getShows, getSeats, createHold, confirmHold, cancelHold, getApiInfo } from './api/client'
 
 function Legend() {
   return (
@@ -24,8 +24,14 @@ export default function App() {
   const [hold, setHold] = useState(null)
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
+  const [apiInfo, setApiInfo] = useState(null)
 
-  useEffect(() => { setLoading(true); getMovies().then(setMovies).finally(() => setLoading(false)) }, [])
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([getMovies(), getApiInfo().catch(() => null)])
+      .then(([ms, info]) => { setMovies(ms); setApiInfo(info) })
+      .finally(() => setLoading(false))
+  }, [])
   useEffect(() => { if (movie) getTheaters(movie).then(setTheaters); setTheater(''); setShows([]); setShow(''); setSeats([]); setSelected([]) }, [movie])
   useEffect(() => { if (movie && theater) getShows(movie, theater).then(setShows); setShow(''); setSeats([]); setSelected([]) }, [theater])
   useEffect(() => { if (show) getSeats(show).then(setSeats); setSelected([]) }, [show])
@@ -74,7 +80,15 @@ export default function App() {
       <header className="bg-gradient-to-r from-brand-500 to-indigo-600 text-white shadow">
         <div className="container py-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold">BookMyShow LLD</h1>
-          <button className="btn btn-secondary" onClick={() => window.fetch(`${import.meta.env.VITE_API_URL}/admin/seed`, { method: 'POST' }).then(() => getMovies().then(setMovies))}>Seed Demo Data</button>
+          <div className="flex items-center gap-2">
+            {apiInfo && (
+              <span className="badge badge-info">API: {apiInfo.ok ? 'connected' : 'offline'}</span>
+            )}
+            {apiInfo && (
+              <span className="badge badge-info">Cache: {apiInfo.cache}</span>
+            )}
+            <button className="btn btn-secondary" onClick={() => window.fetch(`${import.meta.env.VITE_API_URL}/admin/seed`, { method: 'POST' }).then(() => getMovies().then(setMovies))}>Seed Demo Data</button>
+          </div>
         </div>
       </header>
 

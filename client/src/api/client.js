@@ -13,3 +13,5 @@ export const getSeats = (showId) => api(`/shows/${showId}/seats`);
 export const createHold = (showId, body) => api(`/shows/${showId}/hold`, { method: 'POST', body: JSON.stringify(body) });
 export const confirmHold = (holdId) => api(`/holds/${holdId}/confirm`, { method: 'POST' });
 export const cancelHold = (holdId) => api(`/holds/${holdId}/cancel`, { method: 'POST' });
+
+export const getApiInfo = () => api('/');

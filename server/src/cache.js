@@ -35,5 +35,6 @@ async function createCache() {
   console.log('Redis not configured; using in-memory cache.');
   return new MemoryCache();
 }
+function isRedisEnabled() { return !!redis; }
 
-module.exports = { createCache };
+module.exports = { createCache, isRedisEnabled };
