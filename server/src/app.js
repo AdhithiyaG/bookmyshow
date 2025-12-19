@@ -7,7 +7,16 @@ const { seed } = require('./seed');
 
 function createApp(cache) {
   const app = express();
-  app.use(cors({ origin: cfg.corsOrigin }));
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (cfg.corsAllowAll || !origin || cfg.corsOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    optionsSuccessStatus: 200
+  }));
   app.use(morgan('dev'));
   // Root route for platform health probes
   app.get('/', (req, res) => res.json({ ok: true, service: 'bookmyshow-api', endpoints: ['/health','/movies','/shows/:showId/seats'] }));
